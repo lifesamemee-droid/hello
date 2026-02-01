@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Be My Valentine? 💘</title>
+  <style>
+    :root{
+      --bg1:#ff4d6d;
+      --bg2:#ff8fab;
+      --card:#ffffffcc;
+      --text:#3a0b1f;
+      --yes:#ff2d55;
+      --yes2:#ff6b8a;
+      --shadow: 0 20px 60px rgba(0,0,0,.18);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      overflow:hidden;
+      background:
+        radial-gradient(1200px 900px at 10% 10%, #fff2f5 0%, transparent 45%),
+        radial-gradient(900px 700px at 90% 20%, #ffe3ea 0%, transparent 55%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      position:relative;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    /* floating hearts */
+    .hearts{
+      position:absolute; inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      opacity:.35;
+    }
+    .heart{
+      position:absolute;
+      font-size: clamp(16px, 3.2vw, 24px);
+      animation: floatUp linear infinite;
+      transform: translateY(110vh);
+      user-select:none;
+    }
+    @keyframes floatUp{
+      from{ transform: translateY(110vh) rotate(0deg); }
+      to{ transform: translateY(-20vh) rotate(360deg); }
+    }
+
+    /* decor */
+    .decor{ position:absolute; inset:0; pointer-events:none; }
+    .balloon{
+      position:absolute;
+      font-size: clamp(34px, 7vw, 60px);
+      animation: bob 5s ease-in-out infinite;
+      filter: drop-shadow(0 10px 10px rgba(0,0,0,.12));
+      opacity:.95;
+    }
+    .balloon::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      top:70%;
+      width:2px;
+      height: clamp(55px, 10vw, 90px);
+      background: rgba(255,255,255,.6);
+      transform: translateX(-50%);
+      border-radius:2px;
+    }
+    @keyframes bob{
+      0%,100%{ transform: translateY(0) }
+      50%{ transform: translateY(-16px) }
+    }
+
+    .teddy{
+      position:absolute;
+      font-size: clamp(52px, 10vw, 86px);
+      animation: teddyWiggle 6s ease-in-out infinite;
+      filter: drop-shadow(0 16px 14px rgba(0,0,0,.18));
+      opacity:.95;
+    }
+    @keyframes teddyWiggle{
+      0%,100%{ transform: rotate(-2deg) }
+      50%{ transform: rotate(2deg) }
+    }
+
+    .wrap{
+      position:relative;
+      height:100%;
+      display:grid;
+      place-items:center;
+      padding: clamp(14px, 4vw, 24px);
+    }
+
+    .card{
+      width:min(720px, 94vw);
+      border-radius: 28px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      padding: clamp(18px, 5vw, 36px);
+      text-align:center;
+      border: 1px solid rgba(255,255,255,.55);
+    }
+
+    h1{
+      margin: 6px 0 8px;
+      font-size: clamp(26px, 6.2vw, 44px);
+      line-height:1.05;
+    }
+    p{
+      margin: 0 0 16px;
+      font-size: clamp(14px, 3.7vw, 18px);
+      opacity:.9;
+    }
+
+    .btnRow{
+      position:relative;
+      height: clamp(110px, 22vw, 140px);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap: clamp(12px, 3vw, 20px);
+      user-select:none;
+    }
+
+    button{
+      border:0;
+      font-weight: 900;
+      padding: 14px 22px;
+      border-radius: 16px;
+      cursor:pointer;
+      font-size: clamp(16px, 4.2vw, 18px);
+      box-shadow: 0 12px 28px rgba(0,0,0,.16);
+      transition: transform .15s ease;
+      min-width: clamp(120px, 34vw, 170px);
+    }
+    #yesBtn{
+      background: linear-gradient(135deg, var(--yes), var(--yes2));
+      color:white;
+    }
+    #yesBtn:active{ transform: translateY(1px) scale(.99); }
+
+    /* No button is absolute so it can dodge */
+    #noBtn{
+      position:absolute;
+      background: rgba(255,255,255,.8);
+      color:#444;
+      cursor:not-allowed;
+      left: 65%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border: 1px solid rgba(0,0,0,.06);
+      box-shadow: 0 12px 28px rgba(0,0,0,.12);
+      touch-action: none;
+    }
+
+    /* screens */
+    .screen{ display:none; }
+    .screen.active{ display:block; }
+
+    .resultMsg{
+      font-size: clamp(18px, 5vw, 24px);
+      font-weight: 900;
+      line-height: 1.35;
+      margin: 6px 0 12px;
+    }
+
+    .valPic{
+      width: min(420px, 92%);
+      max-height: 52vh;
+      object-fit: cover;
+      border-radius: 18px;
+      display:block;
+      margin: 14px auto 0;
+      box-shadow: 0 14px 34px rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.7);
+    }
+
+    .tiny{
+      margin-top: 10px;
+      font-size: 12px;
+      opacity:.65;
+    }
+
+    /* extra mobile tweaks */
+    @media (max-width: 420px){
+      .card{ border-radius: 22px; }
+      .btnRow{ height: 140px; }
+      #noBtn{ font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hearts" id="hearts"></div>
+
+  <div class="decor" aria-hidden="true">
+    <div class="balloon" style="left:8%; top:10%; animation-duration:4.9s;">🎈</div>
+    <div class="balloon" style="left:84%; top:16%; animation-duration:5.6s;">🎈</div>
+    <div class="balloon" style="left:50%; top:5%; animation-duration:5.2s;">🎈</div>
+
+    <div class="teddy" style="left:3%; bottom:2%;">🧸</div>
+    <div class="teddy" style="right:3%; bottom:2%;">🧸</div>
+  </div>
+
+  <main class="wrap">
+    <section class="card">
+
+      <!-- SCREEN 1 -->
+      <div id="screenQuestion" class="screen active">
+        <h1>Will you be my Valentine? 💘</h1>
+        <p>The No button is a little shy 🙈</p>
+
+        <div class="btnRow" id="arena">
+          <button id="yesBtn">Yes 😍</button>
+          <button id="noBtn" aria-disabled="true" tabindex="-1">No 🙃</button>
+        </div>
+
+        <div class="tiny">Tip: on mobile, try tapping “No” 😈</div>
+      </div>
+
+      <!-- SCREEN 2 -->
+      <div id="screenMessage" class="screen">
+        <div class="resultMsg" id="finalMessage"></div>
+
+        <!-- ✅ PUT YOUR PICTURE HERE -->
+        <img
+          id="valentinePic"
+          class="valPic"
+          src="myphoto.jpeg"
+          alt="Valentine pic"
+        />
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    // Floating hearts
+    const heartsWrap = document.getElementById("hearts");
+    const heartChars = ["💗","💖","💘","💝","💕","❤️"];
+
+    for (let i = 0; i < 20; i++) {
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
+      h.style.left = Math.random()*100 + "vw";
+      h.style.animationDuration = (6 + Math.random()*8) + "s";
+      h.style.animationDelay = (-Math.random()*10) + "s";
+      h.style.opacity = (0.2 + Math.random()*0.7).toFixed(2);
+      heartsWrap.appendChild(h);
+    }
+
+    // Elements
+    const arena = document.getElementById("arena");
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+
+    const screenQuestion = document.getElementById("screenQuestion");
+    const screenMessage  = document.getElementById("screenMessage");
+    const finalMessage   = document.getElementById("finalMessage");
+
+    // Helper: position relative to arena (absolute px)
+    function moveNoButton(){
+      const a = arena.getBoundingClientRect();
+      const b = noBtn.getBoundingClientRect();
+      const pad = 10;
+
+      const maxX = Math.max(0, a.width - b.width - pad*2);
+      const maxY = Math.max(0, a.height - b.height - pad*2);
+
+      const x = pad + Math.random()*maxX;
+      const y = pad + Math.random()*maxY;
+
+      noBtn.style.left = x + "px";
+      noBtn.style.top  = y + "px";
+      noBtn.style.transform = "translate(0,0)";
+    }
+
+    // Desktop (hover / mouse)
+    noBtn.addEventListener("mouseenter", (e)=>{ e.preventDefault(); moveNoButton(); });
+    noBtn.addEventListener("mousemove",  (e)=>{ e.preventDefault(); moveNoButton(); });
+
+    // Mobile (touch): make it dodge before tap lands
+    // pointerdown fires before click on mobile, so it escapes.
+    noBtn.addEventListener("pointerdown", (e)=>{
+      e.preventDefault();
+      moveNoButton();
+    }, {passive:false});
+
+    // Extra: when finger comes close inside arena, dodge
+    arena.addEventListener("pointermove", (e)=>{
+      const b = noBtn.getBoundingClientRect();
+      const dx = e.clientX - (b.left + b.width/2);
+      const dy = e.clientY - (b.top + b.height/2);
+      if (Math.hypot(dx,dy) < 95) moveNoButton();
+    });
+
+    moveNoButton();
+
+    // YES click: hide question and show message
+    yesBtn.addEventListener("click", () => {
+      screenQuestion.classList.remove("active");
+      screenMessage.classList.add("active");
+
+      finalMessage.textContent =
+        "YAYYYY, thank you aalo-bhujiya ❤️❤️❤️🥰😘😍 I wolf you tooooo muah muahhh";
+
+      // Heart celebration
+      for (let i = 0; i < 18; i++) {
+        const h = document.createElement("div");
+        h.className = "heart";
+        h.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
+        h.style.left = (40 + Math.random()*20) + "vw";
+        h.style.animationDuration = (3 + Math.random()*3) + "s";
+        h.style.animationDelay = "0s";
+        h.style.opacity = "0.95";
+        heartsWrap.appendChild(h);
+        setTimeout(()=>h.remove(), 5000);
+      }
+    });
+  </script>
+</body>
+</html>
